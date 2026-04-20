@@ -1,4 +1,4 @@
-# MindSync AI: Project Repository Structure
+# MindSync AI: Project Structure
 
 MindSync AI is a dual-side AI therapist platform. This repository is organized into three primary services and a documentation suite.
 
