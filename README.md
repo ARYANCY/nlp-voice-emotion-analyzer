@@ -69,12 +69,22 @@ npm install
 npm run dev
 ```
 
-### 3. Vapi Integration
-Configure your `VAPI_API_KEY` in `backend/.env` and run the assistant creation script:
+### 3. Frontend Interface (React & Vite)
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### 4. Vapi Integration
+1. First, create your `VAPI_API_KEY` and place it in `backend/.env`.
+2. Ensure your backend is accessible via a public URL (like ngrok) and update `SERVER_URL` in `setupVapi.js` if needed.
+3. Run the assistant creation script:
 ```bash
 cd backend
 node setupVapi.js
 ```
+4. Copy the generated `Assistant ID` and configure it in both `backend/.env` as `VAPI_ASSISTANT_ID` and `frontend/.env` as `VITE_VAPI_ASSISTANT_ID`.
 
 ---
 *Developed for research into the intersection of Deep Learning pipelines and real-time Conversational AI.*

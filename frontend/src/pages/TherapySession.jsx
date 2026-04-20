@@ -7,7 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import Vapi from '@vapi-ai/web';
 
 const API_BASE = 'http://localhost:5000';
-const vapi = new Vapi(import.meta.env.VITE_VAPI_PUBLIC_KEY);
+const VapiClass = Vapi.default || Vapi;
+const vapi = new VapiClass(import.meta.env.VITE_VAPI_PUBLIC_KEY);
 
 const TherapySession = () => {
   const [isActive, setIsActive] = useState(false);
