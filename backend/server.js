@@ -108,6 +108,55 @@ app.get('/analytics/emotions', async (req, res) => {
   }
 });
 
-app.use((req, res) => res.status(404).json({ error: 'Endpoint Not Found' }));
+app.post('/vapi/webhook', async (req, res) => {
+  try {
+    const payload = req.body;
 
+    if (payload.message && payload.message.type === 'tool-calls') {
+      const results = [];
+
+      for (const item of payload.message.toolWithToolCallList) {
+        if (item.toolCall.function.name === 'predict-emotion') {
+          const args = typeof item.toolCall.function.arguments === 'string' 
+            ? JSON.parse(item.toolCall.function.arguments) 
+            : item.toolCall.function.arguments;
+          
+          const text = args.text;
+          
+          // Call local AI service
+          const aiResponse = await axios.post(`${AI_SERVICE_URL}/analyze`, { text });
+          const { emotion, confidence } = aiResponse.data;
+
+          results.push({
+            toolCallId: item.toolCall.id,
+            result: emotion
+          });
+
+          // Store emotion data for dashboard tracking
+          try {
+             // We can use call ID as session to log emotions in background
+             const callId = payload.message.call ? payload.message.call.id : 'unknown_call';
+             let session = await Session.findOne({ sessionId: callId });
+             if (!session) {
+               session = new Session({ sessionId: callId, userName: 'Voice Session', startTime: new Date() });
+             }
+             session.messages.push({ userText: text, aiText: '', emotion, confidence, timestamp: new Date() });
+             await session.save();
+          } catch(err) {
+             console.error("Error storing session data from Vapi webhook: ", err);
+          }
+        }
+      }
+
+      return res.status(201).json({ results });
+    }
+
+    res.status(200).json({});
+  } catch (error) {
+    console.error('Vapi Webhook Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.use((req, res) => res.status(404).json({ error: 'Endpoint Not Found' }));
 app.listen(PORT, () => console.log(`Gateway operational on port ${PORT}`));
