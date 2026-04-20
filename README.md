@@ -1,93 +1,89 @@
-# MindSync AI: Emotionally Intelligent Conversational Agent
+# MindSync AI: Emotionally Intelligent Voice Assistant
 
-MindSync AI is a technical implementation of a real-time, emotionally aware voice assistant. It leverages a custom-trained **Bi-Directional LSTM (Long Short-Term Memory)** model and the **Vapi Conversational Platform** to provide empathetic, supportive interactions for individuals seeking emotional guidance.
+**MindSync AI** is a real-time, emotionally aware voice companion. It uses a custom-trained **Bi-Directional LSTM (Long Short-Term Memory)** model to detect user emotions through speech and adapts its personality in real-time using the **Vapi Conversational Platform**.
 
-## Architecture Flow
+---
 
-This diagram illustrates the integrated flow between the user's voice, the Vapi gateway, and the Deep Learning analytical engine.
+### 🚀 Live Application
+*   **Production Frontend**: [https://nlp-voice-emotion-analyzer-1.onrender.com](https://nlp-voice-emotion-analyzer-1.onrender.com)
+*   **Infrastructure Gateway (API)**: [https://nlp-voice-emotion-analyzer.onrender.com](https://nlp-voice-emotion-analyzer.onrender.com)
+
+---
+
+### 🏗️ System Architecture
+
+MindSync AI follows a unified monorepo structure with a Dockerized backend for high-performance inference.
 
 ```mermaid
 flowchart TD
-    subgraph Communications [Vapi Interface]
-        User((User)) <-->|Low Latency Voice| Vapi[Vapi Voice Agent]
-        Vapi -->|Transcribe| Text[Speech Text]
+    subgraph Client_Side [Frontend Interface]
+        User((User)) <-->|Low Latency Voice| Vapi[Vapi Web Client]
+        Vapi <-->|API Calls| FE[React / Vite App]
     end
 
-    subgraph Logic [Backend Orchestration]
-        Vapi <-->|Webhook| BE[Node.js Gateway]
-        BE -->|Tool Call| Tool[predict-emotion]
-        BE -->|Persistence| DB[(MongoDB Atlas)]
+    subgraph Server_Side [Unified Backend Docker]
+        direction TB
+        BE[Node.js Gateway] <-->|Internal Process| AI[FastAPI Service]
+        AI <-->|LSTM Inference| TF[TensorFlow Engine]
+        BE <-->|Persistence| DB[(MongoDB Atlas)]
     end
 
-    subgraph Analytical_Engine [Deep Learning]
-        Tool <-->|Analyze| AI[FastAPI Service]
-        AI -->|LSTM Inference| TF[TensorFlow Engine]
-        TF -->|Emotion Vector| AI
-    end
-
-    AI -->|State Update| Vapi
+    FE <--->|REST API| BE
+    Vapi <--->|Webhook| BE
 ```
 
-## Societal Impact and Research Context
+---
 
-The development of MindSync AI addresses a critical bottleneck in global mental healthcare infrastructure.
+### 🛠️ Technical Stack
 
-- **Global Health Crisis**: According to the **World Health Organization (WHO)**, approximately 1 in 4 people globally will be affected by mental or neurological disorders.
-- **Access Deficit**: Nearly **70% of individuals** with mental health conditions lack access to professional care due to cost and scheduling barriers.
-- **AI Screening Efficacy**: Empirical studies suggest that automated screening tools using **Deep Learning** improve early detection accuracy by up to **30%** over standard linear models.
+-   **AI Interface**: Vapi (Speech-to-Text, Text-to-Speech, Voice Gateway)
+*   **Neural Architecture**: Bi-Directional LSTM (TensorFlow/Keras)
+-   **Backend**: Node.js (Orchestrator) & FastAPI (AI Inference)
+-   **Database**: MongoDB Atlas (Session & Emotion Tracking)
+-   **Frontend**: React.js with Framer Motion (Glassmorphic Dashboard)
+-   **Deployment**: Dockerized on Render (Unified Environment)
 
-MindSync AI provides a scalable "First-Response" system that listens, empathizes, and predicts emotional states to support help-seeking behavior.
+---
 
-## Project Technical Documentation
-Access detailed technical specifications via the links below:
-- [**System Architecture Specification**](./docs/architecture.md): Integration of Vapi, Node.js, and FastAPI.
-- [**Machine Learning Pipeline**](./docs/ml_pipeline.md): Bidirectional LSTM (Bi-LSTM) and TensorFlow implementation.
-- [**Training and Methodology**](./docs/training.md): Detailed report on model training, data preprocessing, and evaluation.
-- [**Research and Literature Review**](./docs/research.md): Deep search into LSTMs and Conversational Behavioral Health.
+### 📂 Repository Structure
 
-## Model Performance and Validation
+*   **/frontend**: React client with dynamic emotional analytics.
+*   **/backend**:
+    *   **server.js**: Node.js gateway that manages the Python AI process.
+    *   **/ai-services**: Python FastAPI service running the LSTM model.
+*   **/docs**: Detailed research papers, training logs, and architecture specs.
+*   **/Training**: Juypter notebooks used for model development and evaluation.
 
-The model is trained on the [**Emotions Dataset for NLP**](https://www.kaggle.com/datasets/praveengovi/emotions-dataset-for-nlp) (20,000+ samples), reaching **~92% Accuracy**.
+---
 
-| Training Curves | Test Metrics & Results |
-| :---: | :---: |
-| ![Accuracy Plots](docs/assets/training-validation-acc.jpeg) | ![Confusion Matrix](docs/assets/test-accuracy.jpeg) |
+### ⚙️ Quick Start (Local Development)
 
-## Services Setup
+#### 1. Configure Environment
+Create a `.env` file in both `/backend` and `/frontend` using the provided `.env.example` templates.
 
-### 1. Unified Backend (Node.js & Python)
-The backend now manages the AI service automatically.
+#### 2. Run Unified Backend
 ```bash
 cd backend
 npm install
-# Ensure Python is installed
 pip install -r ai-services/requirements.txt
 npm run dev
 ```
 
-### 2. Frontend Interface (React & Vite)
+#### 3. Run Frontend
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-
-### 3. Frontend Interface (React & Vite)
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-### 4. Vapi Integration
-1. First, create your `VAPI_API_KEY` and place it in `backend/.env`.
-2. Ensure your backend is accessible via a public URL (Render URL in production or Ngrok in local) and update `SERVER_URL` in `backend/.env`.
-3. Run the assistant creation script:
-```bash
-cd backend
-node setupVapi.js
-```
-4. Copy the generated `Assistant ID` and configure it in both `backend/.env` as `VAPI_ASSISTANT_ID` and `frontend/.env` as `VITE_VAPI_ASSISTANT_ID`.
 
 ---
-*Developed for research into the intersection of Deep Learning pipelines and real-time Conversational AI.*
+
+### 📊 Research & Validation
+The model is trained on a dataset of **20,000+ samples**, achieving a validation accuracy of **~92%**. It covers primary emotional vectors including Joy, Sadness, Anger, Fear, and Surprise.
+
+| Training Performance | Inference Confidence |
+| :---: | :---: |
+| ![Accuracy Plots](docs/assets/training-validation-acc.jpeg) | ![Confusion Matrix](docs/assets/test-accuracy.jpeg) |
+
+---
+*Developed for research into the intersection of Deep Learning pipelines and real-time Conversational Behavioral Health.*
