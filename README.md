@@ -81,7 +81,7 @@ npm run dev
 
 ### 4. Vapi Integration
 1. First, create your `VAPI_API_KEY` and place it in `backend/.env`.
-2. Ensure your backend is accessible via a public URL (like ngrok) and update `SERVER_URL` in `setupVapi.js` if needed.
+2. Ensure your backend is accessible via a public URL (Render URL in production or Ngrok in local) and update `SERVER_URL` in `backend/.env`.
 3. Run the assistant creation script:
 ```bash
 cd backend

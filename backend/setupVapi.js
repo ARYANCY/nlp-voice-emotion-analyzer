@@ -2,8 +2,8 @@ const axios = require('axios');
 require('dotenv').config();
 
 const VAPI_API_KEY = process.env.VAPI_API_KEY;
-// The local server url for tools, usually exposed via ngrok when testing locally
-const SERVER_URL = process.env.NGROK_URL || 'https://your-ngrok-url.ngrok-free.app';
+// The public URL of your backend (Render URL in production, Ngrok in local)
+const SERVER_URL = process.env.SERVER_URL || process.env.NGROK_URL;
 
 if (!VAPI_API_KEY || VAPI_API_KEY === 'your_vapi_api_key_here') {
   console.error('Please configure your VAPI_API_KEY in backend/.env');
