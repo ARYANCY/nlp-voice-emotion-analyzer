@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import Vapi from '@vapi-ai/web';
 
 const API_BASE = 'http://localhost:5000';
-const vapi = new Vapi(import.meta.env.VITE_VAPI_PUBLIC_KEY || 'your_vapi_public_key_here');
+const vapi = new Vapi(import.meta.env.VITE_VAPI_PUBLIC_KEY);
 
 const TherapySession = () => {
   const [isActive, setIsActive] = useState(false);
@@ -20,7 +20,7 @@ const TherapySession = () => {
   const [sessionEnded, setSessionEnded] = useState(false);
   const [isUserSpeaking, setIsUserSpeaking] = useState(false);
   const [isAiSpeaking, setIsAiSpeaking] = useState(false);
-  
+
   const chatEndRef = useRef(null);
   const navigate = useNavigate();
 
@@ -87,10 +87,10 @@ const TherapySession = () => {
     const userProfile = JSON.parse(localStorage.getItem('user'));
     const assistantId = import.meta.env.VITE_VAPI_ASSISTANT_ID || 'your_vapi_assistant_id_here';
     vapi.start(assistantId);
-    
+
     const tempId = 'call_pending_' + Date.now();
     setSessionId(tempId);
-    await axios.post(`${API_BASE}/session/start`, { 
+    await axios.post(`${API_BASE}/session/start`, {
       sessionId: tempId,
       userName: userProfile.name,
       userEmail: userProfile.email
@@ -101,7 +101,7 @@ const TherapySession = () => {
     setIsActive(false);
     try {
       await axios.post(`${API_BASE}/session/end`, { sessionId });
-    } catch(err) {}
+    } catch (err) { }
     setSessionEnded(true);
     confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
   };
@@ -122,17 +122,17 @@ const TherapySession = () => {
   if (!isActive && !sessionEnded) {
     return (
       <div className="flex flex-col items-center justify-center h-[85vh]">
-        <motion.div 
+        <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           className="glass-card p-12 text-center max-w-md border-indigo-500/20"
         >
           <div className="w-24 h-24 bg-indigo-600/20 rounded-full flex items-center justify-center mx-auto mb-8 relative">
             <Bot className="text-indigo-400" size={48} />
-            <motion.div 
-              animate={{ scale: [1, 1.2, 1] }} 
+            <motion.div
+              animate={{ scale: [1, 1.2, 1] }}
               transition={{ repeat: Infinity, duration: 2 }}
-              className="absolute inset-0 rounded-full border-2 border-indigo-500/30" 
+              className="absolute inset-0 rounded-full border-2 border-indigo-500/30"
             />
           </div>
           <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">Virtual Session</h2>
@@ -148,7 +148,7 @@ const TherapySession = () => {
   if (sessionEnded) {
     return (
       <div className="flex flex-col items-center justify-center h-[85vh]">
-        <motion.div 
+        <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           className="glass-card p-12 text-center max-w-md border-green-500/30 bg-green-500/5"
@@ -194,7 +194,7 @@ const TherapySession = () => {
           {/* AI Therapist Participant */}
           <div className="relative bg-[#1a1d23] rounded-xl border border-slate-700 overflow-hidden flex items-center justify-center group">
             <div className={`absolute inset-0 transition-all duration-500 ${isAiSpeaking ? 'border-4 border-green-500 shadow-[0_0_30px_rgba(34,197,94,0.3)]' : 'border-transparent'}`} />
-            
+
             <div className="text-center z-10">
               <div className="w-24 h-24 bg-indigo-600/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-indigo-500/30">
                 <Bot className="text-indigo-400" size={48} />
@@ -212,7 +212,7 @@ const TherapySession = () => {
           {/* User Participant */}
           <div className="relative bg-[#1a1d23] rounded-xl border border-slate-700 overflow-hidden flex items-center justify-center">
             <div className={`absolute inset-0 transition-all duration-500 ${isUserSpeaking ? 'border-4 border-indigo-500 shadow-[0_0_30px_rgba(99,102,241,0.3)]' : 'border-transparent'}`} />
-            
+
             <div className="text-center">
               <div className="w-24 h-24 bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4 border border-slate-600">
                 <span className="text-5xl">👤</span>
@@ -233,7 +233,7 @@ const TherapySession = () => {
             <span className="text-xs font-bold uppercase tracking-widest text-slate-400">Live Transcription</span>
             <MoreHorizontal size={16} className="text-slate-500" />
           </div>
-          
+
           <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
             <AnimatePresence initial={false}>
               {messages.length === 0 && (
@@ -268,7 +268,7 @@ const TherapySession = () => {
       {/* Zoom Bottom Control Bar */}
       <div className="bg-[#1a1d23] px-8 py-6 flex justify-center items-center gap-8 border-t border-slate-800">
         <div className="flex items-center gap-4">
-          <button 
+          <button
             onClick={toggleMute}
             className={`flex flex-col items-center gap-1 group transition-all`}
           >
@@ -278,7 +278,7 @@ const TherapySession = () => {
             <span className="text-[10px] font-bold text-slate-500 uppercase">{!isMuted ? 'Unmute' : 'Mute'}</span>
           </button>
 
-          <button 
+          <button
             onClick={() => setIsVideoOn(!isVideoOn)}
             className={`flex flex-col items-center gap-1 group transition-all`}
           >
@@ -291,7 +291,7 @@ const TherapySession = () => {
 
         <div className="h-12 w-[1px] bg-slate-800 mx-4" />
 
-        <button 
+        <button
           onClick={endSession}
           className="flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white px-8 py-4 rounded-xl font-bold transition-all shadow-lg shadow-red-600/20 active:scale-95"
         >
