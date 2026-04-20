@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const axios = require('axios');
+const { spawn } = require('child_process');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
@@ -159,4 +161,35 @@ app.post('/vapi/webhook', async (req, res) => {
 });
 
 app.use((req, res) => res.status(404).json({ error: 'Endpoint Not Found' }));
-app.listen(PORT, () => console.log(`Gateway operational on port ${PORT}`));
+
+// Start AI Service automatically if in local environment or as part of unified service
+const startAiService = () => {
+  console.log('Initiating AI Personality Engine...');
+  const aiPath = path.join(__dirname, 'ai-services', 'main.py');
+  
+  // Use 'python' or 'python3' depending on environment
+  const pythonCmd = process.platform === 'win32' ? 'python' : 'python3';
+  
+  const aiProcess = spawn(pythonCmd, [aiPath], {
+    env: { ...process.env, PORT: '8000' }
+  });
+
+  aiProcess.stdout.on('data', (data) => {
+    console.log(`[AI-Service]: ${data}`);
+  });
+
+  aiProcess.stderr.on('data', (data) => {
+    console.error(`[AI-Service-Error]: ${data}`);
+  });
+
+  aiProcess.on('close', (code) => {
+    console.log(`AI Service exited with code ${code}`);
+  });
+};
+
+app.listen(PORT, () => {
+  console.log(`Gateway operational on port ${PORT}`);
+  if (process.env.START_AI_SERVICE !== 'false') {
+    startAiService();
+  }
+});

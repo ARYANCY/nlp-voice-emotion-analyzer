@@ -55,16 +55,19 @@ The model is trained on the [**Emotions Dataset for NLP**](https://www.kaggle.co
 
 ## Services Setup
 
-### 1. AI Analysis Service (FastAPI)
-```bash
-cd ai-service
-pip install -r requirements.txt
-python main.py
-```
-
-### 2. Backend Orchestrator (Node.js)
+### 1. Unified Backend (Node.js & Python)
+The backend now manages the AI service automatically.
 ```bash
 cd backend
+npm install
+# Ensure Python is installed
+pip install -r ai-services/requirements.txt
+npm run dev
+```
+
+### 2. Frontend Interface (React & Vite)
+```bash
+cd frontend
 npm install
 npm run dev
 ```

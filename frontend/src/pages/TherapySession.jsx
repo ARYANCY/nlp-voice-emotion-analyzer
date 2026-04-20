@@ -6,7 +6,7 @@ import confetti from 'canvas-confetti';
 import { useNavigate } from 'react-router-dom';
 import Vapi from '@vapi-ai/web';
 
-const API_BASE = 'http://localhost:5000';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 const VapiClass = Vapi.default || Vapi;
 const vapi = new VapiClass(import.meta.env.VITE_VAPI_PUBLIC_KEY);
 
