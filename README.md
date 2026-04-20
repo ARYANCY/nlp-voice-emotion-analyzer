@@ -33,4 +33,4 @@ Detailed documentation about the platform's inner workings.
 ---
 
 ## 🚀 Quick Execution
-For setup and installation steps, please refer to the internal document directories or the [README Archive](./README_ARCHIVE.md) (previous version).
+For setup and installation steps, please refer to the internal document directories or the [README Archive](./README_ARCHIVE.md).
