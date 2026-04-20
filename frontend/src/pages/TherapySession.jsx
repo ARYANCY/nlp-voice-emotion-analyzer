@@ -45,22 +45,6 @@ const TherapySession = () => {
     vapi.on('speech-end', () => setIsUserSpeaking(false));
 
     vapi.on('message', (message) => {
-      if (message.type === 'call-start' || message.call?.id) {
-        if (!sessionIdRef.current) {
-          const newId = message.call?.id || 'sess_' + Date.now();
-          setSessionId(newId);
-          sessionIdRef.current = newId;
-
-          // Start the session on the backend now that we have the real ID
-          const userProfile = JSON.parse(localStorage.getItem('user'));
-          axios.post(`${API_BASE}/session/start`, {
-            sessionId: newId,
-            userName: userProfile?.name || 'Anonymous',
-            userEmail: userProfile?.email || 'No Email'
-          }).catch(console.error);
-        }
-      }
-
       if (message.type === 'vapi-speech-start') setIsAiSpeaking(true);
       if (message.type === 'vapi-speech-end') setIsAiSpeaking(false);
 
@@ -113,6 +97,17 @@ const TherapySession = () => {
   const startSession = async () => {
     const assistantId = import.meta.env.VITE_VAPI_ASSISTANT_ID || 'your_vapi_assistant_id_here';
     vapi.start(assistantId);
+
+    const tempId = 'sess_' + Date.now();
+    setSessionId(tempId);
+    sessionIdRef.current = tempId;
+
+    const userProfile = JSON.parse(localStorage.getItem('user'));
+    await axios.post(`${API_BASE}/session/start`, {
+      sessionId: tempId,
+      userName: userProfile?.name || 'Anonymous',
+      userEmail: userProfile?.email || 'No Email'
+    });
   };
 
   const handleCompleteSession = async () => {
