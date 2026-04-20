@@ -42,6 +42,7 @@ MindSync AI provides a scalable "First-Response" system that listens, empathizes
 Access detailed technical specifications via the links below:
 - [**System Architecture Specification**](./docs/architecture.md): Integration of Vapi, Node.js, and FastAPI.
 - [**Machine Learning Pipeline**](./docs/ml_pipeline.md): Bidirectional LSTM (Bi-LSTM) and TensorFlow implementation.
+- [**Training and Methodology**](./docs/training.md): Detailed report on model training, data preprocessing, and evaluation.
 - [**Research and Literature Review**](./docs/research.md): Deep search into LSTMs and Conversational Behavioral Health.
 
 ## Model Performance and Validation
