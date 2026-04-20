@@ -14,6 +14,10 @@ const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
 const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
 
+app.get('/', (req, res) => {
+  res.json({ status: 'MindSync API Operational', version: '1.0.0' });
+});
+
 const SessionSchema = new mongoose.Schema({
   sessionId: String,
   userName: String,
