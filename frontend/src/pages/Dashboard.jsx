@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
   PieChart, Pie, Cell, Legend
 } from 'recharts';
-import { Calendar, Clock, History, Brain, Activity } from 'lucide-react';
+import { Calendar, Clock, History, Brain, Activity, RefreshCw } from 'lucide-react';
 import axios from 'axios';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
@@ -14,7 +13,7 @@ const Dashboard = () => {
   const [emotionData, setEmotionData] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const COLORS = ['#6366f1', '#a855f7', '#ec4899', '#06b6d4', '#10b981'];
+  const COLORS = ['#2563eb', '#8b5cf6', '#ec4899', '#06b6d4', '#10b981'];
 
   useEffect(() => {
     fetchData();
@@ -51,36 +50,34 @@ const Dashboard = () => {
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center h-screen text-slate-400">Loading Intelligence...</div>;
+    return <div className="flex items-center justify-center h-screen text-slate-500 font-medium">Initializing Clinical Telemetry...</div>;
   }
 
   return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="max-w-7xl mx-auto space-y-8"
-    >
-      <header className="flex justify-between items-end mb-8">
+    <div className="container-main space-y-10">
+      <header className="flex justify-between items-start pb-6 border-b border-slate-200">
         <div>
-          <h1 className="text-4xl font-bold text-white mb-2">Emotional Intelligence Dashboard</h1>
-          <p className="text-slate-400">Deep insights into your psychological well-being over time.</p>
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Emotional Analytics Portal</h1>
+          <p className="text-slate-500 mt-1">Consolidated longitudinal data for psychological monitoring.</p>
         </div>
-        <button onClick={fetchData} className="p-2 text-slate-400 hover:text-indigo-400 transition-colors">
-          <Activity size={24} />
+        <button onClick={fetchData} className="btn-secondary flex items-center gap-2">
+          <RefreshCw size={18} /> Refresh Data
         </button>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <StatCard icon={<History />} label="Total Sessions" value={sessions.length} />
-        <StatCard icon={<Brain />} label="Avg. Confidence" value={`${Math.round(sessions.length > 0 ? (sessions.reduce((acc, s) => acc + (s.messages[0]?.confidence || 0), 0) / sessions.length) * 100 : 0)}%`} />
-        <StatCard icon={<Clock />} label="Total Insight Time" value={`${Math.round(sessions.reduce((acc, s) => acc + (s.duration || 0), 0) / 60)} mins`} />
+        <StatCard icon={<History size={20} />} label="Total Registered Sessions" value={sessions.length} />
+        <StatCard icon={<Brain size={20} />} label="Avg. Confidence Score" value={`${Math.round(sessions.length > 0 ? (sessions.reduce((acc, s) => acc + (s.messages[0]?.confidence || 0), 0) / sessions.length) * 100 : 0)}%`} />
+        <StatCard icon={<Clock size={20} />} label="Total Monitoring Time" value={`${Math.round(sessions.reduce((acc, s) => acc + (s.duration || 0), 0) / 60)}m`} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="glass-card p-8">
-          <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-            <Activity className="text-pink-500" /> Emotion Distribution
-          </h3>
+        <div className="official-card p-8">
+          <div className="flex items-center justify-between mb-8">
+            <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <Activity className="text-blue-600" size={18} /> Sentiment Distribution
+            </h3>
+          </div>
           <div style={{ width: '100%', height: 320 }}>
             <ResponsiveContainer width="99%" height="100%">
               <PieChart>
@@ -88,9 +85,9 @@ const Dashboard = () => {
                   data={emotionData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={60}
+                  innerRadius={70}
                   outerRadius={100}
-                  paddingAngle={5}
+                  paddingAngle={8}
                   dataKey="value"
                 >
                   {emotionData.map((entry, index) => (
@@ -98,73 +95,73 @@ const Dashboard = () => {
                   ))}
                 </Pie>
                 <Tooltip 
-                  contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '12px', color: '#fff' }}
-                  itemStyle={{ color: '#fff' }}
+                  contentStyle={{ backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '12px' }}
                 />
-                <Legend verticalAlign="bottom" height={36}/>
+                <Legend layout="vertical" align="right" verticalAlign="middle" />
               </PieChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="glass-card p-8">
-          <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-            <Calendar className="text-indigo-500" /> Interaction Density
+        <div className="official-card p-8">
+          <h3 className="text-lg font-bold text-slate-900 mb-8 flex items-center gap-2">
+            <Calendar className="text-blue-600" size={18} /> Engagement Density
           </h3>
           <div style={{ width: '100%', height: 320 }}>
             <ResponsiveContainer width="99%" height="100%">
               <BarChart data={getEmotionTrendData()}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#2d3748" />
-                <XAxis dataKey="date" stroke="#94a3b8" />
-                <YAxis stroke="#94a3b8" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <XAxis dataKey="date" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
+                <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
                 <Tooltip 
-                   contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '12px', color: '#fff' }}
+                   cursor={{fill: '#f8fafc'}}
+                   contentStyle={{ backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '12px' }}
                 />
-                <Bar dataKey="count" fill="#6366f1" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="count" fill="#2563eb" radius={[4, 4, 0, 0]} barSize={40} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
       </div>
 
-      <div className="glass-card overflow-hidden">
-        <div className="p-6 border-b border-slate-700/50">
-          <h3 className="text-xl font-bold">Recent Sessions</h3>
+      <div className="official-card overflow-hidden">
+        <div className="p-6 border-b border-slate-100 bg-slate-50/50">
+          <h3 className="text-lg font-bold text-slate-900">Patient Session Registry</h3>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead className="bg-slate-800/50 text-slate-400 text-sm uppercase tracking-wider">
+          <table className="w-full text-left text-sm">
+            <thead className="bg-white text-slate-500 uppercase text-[10px] font-bold tracking-wider">
               <tr>
-                <th className="px-6 py-4 font-semibold">User</th>
-                <th className="px-6 py-4 font-semibold">Start Time</th>
-                <th className="px-6 py-4 font-semibold">Messages</th>
-                <th className="px-6 py-4 font-semibold">Duration</th>
-                <th className="px-6 py-4 font-semibold">Dominant Emotion</th>
-                <th className="px-6 py-4 font-semibold">Status</th>
+                <th className="px-6 py-4 border-b border-slate-100">Subject</th>
+                <th className="px-6 py-4 border-b border-slate-100">Timestamp</th>
+                <th className="px-6 py-4 border-b border-slate-100">Packet Count</th>
+                <th className="px-6 py-4 border-b border-slate-100">Exposure</th>
+                <th className="px-6 py-4 border-b border-slate-100">Primary Emotion</th>
+                <th className="px-6 py-4 border-b border-slate-100">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-700/50">
+            <tbody className="divide-y divide-slate-100">
               {sessions.map((session) => (
-                <tr key={session._id} className="hover:bg-slate-800/30 transition-colors">
+                <tr key={session._id} className="hover:bg-slate-50/50 transition-colors">
                   <td className="px-6 py-4">
-                    <div className="text-white font-medium">{session.userName || 'Anonymous'}</div>
-                    <div className="text-slate-500 text-xs">{session.userEmail || 'No Email'}</div>
+                    <div className="text-slate-900 font-semibold">{session.userName || 'Unidentified'}</div>
+                    <div className="text-slate-400 text-xs">{session.userEmail || 'N/A'}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-slate-100">
-                    {new Date(session.startTime).toLocaleString()}
+                  <td className="px-6 py-4 text-slate-600">
+                    {new Date(session.startTime).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}
                   </td>
-                  <td className="px-6 py-4 text-slate-300">{session.messages.length}</td>
-                  <td className="px-6 py-4 text-slate-300">
+                  <td className="px-6 py-4 text-slate-600 font-mono">{session.messages.length}</td>
+                  <td className="px-6 py-4 text-slate-600">
                     {Math.round(session.duration || 0)}s
                   </td>
                   <td className="px-6 py-4">
-                    <span className="px-3 py-1 bg-indigo-500/10 text-indigo-400 rounded-full text-xs font-bold ring-1 ring-indigo-500/20">
-                      {session.messages[session.messages.length-1]?.emotion || 'N/A'}
+                    <span className="badge badge-blue">
+                      {session.messages[session.messages.length-1]?.emotion || 'NEUTRAL'}
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-2 text-green-400">
-                      <div className="w-2 h-2 rounded-full bg-green-400" /> Saved
+                    <div className="flex items-center gap-1.5 text-emerald-600 font-medium">
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Archival Set
                     </div>
                   </td>
                 </tr>
@@ -173,18 +170,18 @@ const Dashboard = () => {
           </table>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
 const StatCard = ({ icon, label, value }) => (
-  <div className="glass-card p-6 flex items-center gap-6">
-    <div className="p-4 bg-slate-800/50 rounded-2xl text-indigo-400">
-      {icon}
-    </div>
+  <div className="official-card p-6 flex items-center justify-between">
     <div>
-      <p className="text-slate-400 text-sm">{label}</p>
-      <p className="text-2xl font-bold text-white">{value}</p>
+      <p className="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">{label}</p>
+      <p className="text-3xl font-bold text-slate-900">{value}</p>
+    </div>
+    <div className="p-3 bg-blue-50 text-blue-600 rounded-lg">
+      {icon}
     </div>
   </div>
 );

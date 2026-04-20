@@ -1,55 +1,57 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
 import { BrainCircuit, LayoutDashboard, MessageSquareHeart, Home as HomeIcon } from 'lucide-react';
 import TherapySession from './pages/TherapySession';
 import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
 import Login from './pages/Login';
 
-function Nav() {
+function Header() {
   const location = useLocation();
   
   return (
-    <nav className="fixed left-6 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-6 p-4 glass-card bg-opacity-20 backdrop-blur-xl">
-      <Link to="/">
-        <NavIcon icon={<HomeIcon size={24} />} active={location.pathname === "/"} label="Home" />
-      </Link>
-      <Link to="/login">
-        <NavIcon icon={<MessageSquareHeart size={24} />} active={location.pathname === "/login" || location.pathname === "/therapy"} label="Sessions" />
-      </Link>
-      <Link to="/dashboard">
-        <NavIcon icon={<LayoutDashboard size={24} />} active={location.pathname === "/dashboard"} label="Dashboard" />
-      </Link>
-    </nav>
+    <header className="sticky top-0 z-50 bg-white border-b border-slate-200">
+      <div className="container-main py-4 flex justify-between items-center">
+        <Link to="/" className="flex items-center gap-2">
+          <div className="bg-blue-600 p-1.5 rounded-lg">
+            <BrainCircuit className="text-white" size={20} />
+          </div>
+          <span className="font-bold text-xl tracking-tight text-slate-900">MindSync <span className="text-blue-600">AI</span></span>
+        </Link>
+        <div className="flex items-center gap-2">
+          <NavLink to="/" active={location.pathname === "/"} icon={<HomeIcon size={18} />} label="Home" />
+          <NavLink to="/login" active={location.pathname === "/login" || location.pathname === "/therapy"} icon={<MessageSquareHeart size={18} />} label="Sessions" />
+          <NavLink to="/dashboard" active={location.pathname === "/dashboard"} icon={<LayoutDashboard size={18} />} label="Dashboard" />
+        </div>
+      </div>
+    </header>
   );
 }
 
-function NavIcon({ icon, active, label }) {
+function NavLink({ to, active, icon, label }) {
   return (
-    <div className={`relative group p-3 rounded-xl transition-all duration-300 ${active ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/40' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}>
+    <Link 
+      to={to} 
+      className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${active ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}
+    >
       {icon}
-      <span className="absolute left-16 top-1/2 -translate-y-1/2 px-2 py-1 bg-slate-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
-        {label}
-      </span>
-    </div>
+      {label}
+    </Link>
   );
 }
 
 function App() {
   return (
     <Router>
-      <div className="flex min-h-screen">
-        <Nav />
-        <main className="flex-1 ml-24 p-8">
-          <AnimatePresence mode="wait">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/therapy" element={<TherapySession />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-            </Routes>
-          </AnimatePresence>
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 bg-[#f8fafc]">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/therapy" element={<TherapySession />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Routes>
         </main>
       </div>
     </Router>

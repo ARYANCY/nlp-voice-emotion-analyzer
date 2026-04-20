@@ -1,76 +1,71 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { BrainCircuit, Mic, ShieldCheck, TrendingUp } from 'lucide-react';
+import { BrainCircuit, Mic, ShieldCheck, TrendingUp, ChevronRight } from 'lucide-react';
 
 const Home = () => {
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="max-w-6xl mx-auto py-12"
-    >
-      <div className="text-center mb-16">
-        <motion.h1 
-          className="text-7xl font-extrabold mb-6 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent"
-          initial={{ scale: 0.9 }}
-          animate={{ scale: 1 }}
-        >
-          MindSync AI
-        </motion.h1>
-        <p className="text-xl text-slate-400 max-w-2xl mx-auto">
-          Your personal emotional companion. Voice-driven therapy sessions powered by 
-          advanced NLP to help you understand your emotional journey.
+    <div className="container-main py-16">
+      <div className="max-w-4xl mx-auto text-center mb-20">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-700 text-sm font-medium mb-6">
+          <BrainCircuit size={16} />
+          <span>Professional Sentiment Analysis</span>
+        </div>
+        <h1 className="text-5xl font-bold tracking-tight text-slate-900 mb-6">
+          MindSync AI <span className="text-blue-600">Emotion Analyzer</span>
+        </h1>
+        <p className="text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
+          A clinical-grade emotional companion powered by advanced Natural Language Processing. 
+          Analyze vocal patterns and emotional states in real-time to monitor mental well-being.
         </p>
+        <div className="mt-10 flex items-center justify-center gap-4">
+          <Link to="/login" className="btn-primary px-8 py-3 text-lg">
+            Start Session <ChevronRight size={20} />
+          </Link>
+          <Link to="/dashboard" className="btn-secondary px-8 py-3 text-lg">
+            Analytics Dashboard
+          </Link>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
         <FeatureCard 
-          icon={<Mic className="text-indigo-400" size={32} />}
-          title="Voice Interface"
-          desc="Speak naturally. Our AI listens and understands your vocal emotional cues."
+          icon={<Mic className="text-blue-600" size={24} />}
+          title="Voice Analysis"
+          desc="Proprietary algorithms analyze vocal tone and pitch to detect underlying emotional markers with high precision."
         />
         <FeatureCard 
-          icon={<BrainCircuit className="text-purple-400" size={32} />}
-          title="NLP Analysis"
-          desc="Real-time emotion detection classifying 5 core emotional states."
+          icon={<BrainCircuit className="text-indigo-600" size={24} />}
+          title="NLP Architecture"
+          desc="Real-time classification using state-of-the-art transformer models to categorize emotional states into clinical categories."
         />
         <FeatureCard 
-          icon={<ShieldCheck className="text-pink-400" size={32} />}
-          title="Private & Secure"
-          desc="All sessions are stored securely in your private encrypted dashboard."
+          icon={<ShieldCheck className="text-emerald-600" size={24} />}
+          title="Data Integrity"
+          desc="Enterprise-grade encryption for all therapy sessions, ensuring total privacy and HIPAA-compliant data handling."
         />
         <FeatureCard 
-          icon={<TrendingUp className="text-cyan-400" size={32} />}
-          title="Trend Tracking"
-          desc="Visualize your mental well-being over time with deep analytics."
+          icon={<TrendingUp className="text-cyan-600" size={24} />}
+          title="Longitudinal Trends"
+          desc="Visualize psychological developments over time with comprehensive data-driven reporting and trend analysis."
         />
       </div>
 
-      <div className="flex justify-center gap-6">
-        <Link to="/login">
-          <button className="px-8 py-4 bg-indigo-600 rounded-2xl font-bold text-lg hover:bg-indigo-500 transition-all shadow-xl shadow-indigo-600/20">
-            Start a Session
-          </button>
-        </Link>
-        <Link to="/dashboard">
-          <button className="px-8 py-4 bg-slate-800 border border-slate-700 rounded-2xl font-bold text-lg hover:bg-slate-700 transition-all">
-            View Analytics
-          </button>
-        </Link>
+      <div className="border-t border-slate-200 pt-16 text-center">
+        <p className="text-sm text-slate-400">© 2024 MindSync Systems. All Rights Reserved. Clinical Research Edition.</p>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
 const FeatureCard = ({ icon, title, desc }) => (
-  <div className="glass-card p-8 flex flex-col gap-4 border-slate-800/50 hover:border-indigo-500/30 transition-all duration-300">
-    <div className="w-14 h-14 rounded-2xl bg-slate-800/50 flex items-center justify-center mb-2">
+  <div className="official-card p-10 flex flex-col gap-5">
+    <div className="w-12 h-12 rounded-lg bg-slate-50 flex items-center justify-center border border-slate-100">
       {icon}
     </div>
-    <h3 className="text-xl font-bold text-slate-100">{title}</h3>
-    <p className="text-slate-400 leading-relaxed text-sm">{desc}</p>
+    <div>
+      <h3 className="text-xl font-bold text-slate-900 mb-2">{title}</h3>
+      <p className="text-slate-600 leading-relaxed">{desc}</p>
+    </div>
   </div>
 );
 

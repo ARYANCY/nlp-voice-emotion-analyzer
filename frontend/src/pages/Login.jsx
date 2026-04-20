@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { User, Mail, ArrowRight } from 'lucide-react';
+import { User, Mail, ArrowRight, ShieldCheck } from 'lucide-react';
 
 const Login = () => {
   const [formData, setFormData] = useState({ name: '', email: '' });
@@ -16,51 +15,54 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[80vh]">
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="glass-card p-10 w-full max-w-md"
-      >
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-white mb-2">Welcome Back</h2>
-          <p className="text-slate-400">Enter your details to start your session</p>
+    <div className="container-main flex items-center justify-center min-h-[80vh]">
+      <div className="official-card p-10 w-full max-w-md bg-white shadow-xl">
+        <div className="text-center mb-10">
+          <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center mx-auto mb-4 border border-blue-100">
+            <ShieldCheck size={28} />
+          </div>
+          <h2 className="text-2xl font-bold text-slate-900 mb-2">Subject Authorization</h2>
+          <p className="text-slate-500 text-sm">Please verify your identity to proceed with the clinical session.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-300 ml-1">Full Name</label>
+            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Full Name</label>
             <div className="relative">
-              <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
+              <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
               <input 
                 type="text" 
                 required
-                placeholder="John Doe"
-                className="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 pl-12 pr-4 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                placeholder="Enter formal name"
+                className="pl-12"
                 onChange={(e) => setFormData({...formData, name: e.target.value})}
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-300 ml-1">Email Address</label>
+            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Work Email</label>
             <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
               <input 
                 type="email" 
                 required
-                placeholder="john@example.com"
-                className="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 pl-12 pr-4 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                placeholder="professional@institution.edu"
+                className="pl-12"
                 onChange={(e) => setFormData({...formData, email: e.target.value})}
               />
             </div>
           </div>
 
-          <button type="submit" className="btn-primary w-full justify-center py-4 text-lg mt-4">
-            Start Journey <ArrowRight className="ml-2" size={20} />
+          <button type="submit" className="btn-primary w-full py-4 mt-4 shadow-md">
+            Authorize & Begin Session <ArrowRight className="ml-2" size={18} />
           </button>
         </form>
-      </motion.div>
+
+        <div className="mt-8 pt-6 border-t border-slate-100 text-center">
+          <p className="text-[10px] text-slate-400 uppercase tracking-widest font-medium">Session Encryption Enabled</p>
+        </div>
+      </div>
     </div>
   );
 };
