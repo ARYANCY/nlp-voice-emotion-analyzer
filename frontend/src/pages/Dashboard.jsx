@@ -81,8 +81,8 @@ const Dashboard = () => {
           <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
             <Activity className="text-pink-500" /> Emotion Distribution
           </h3>
-          <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
+          <div style={{ width: '100%', height: 320 }}>
+            <ResponsiveContainer width="99%" height="100%">
               <PieChart>
                 <Pie
                   data={emotionData}
@@ -111,8 +111,8 @@ const Dashboard = () => {
           <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
             <Calendar className="text-indigo-500" /> Interaction Density
           </h3>
-          <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
+          <div style={{ width: '100%', height: 320 }}>
+            <ResponsiveContainer width="99%" height="100%">
               <BarChart data={getEmotionTrendData()}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#2d3748" />
                 <XAxis dataKey="date" stroke="#94a3b8" />

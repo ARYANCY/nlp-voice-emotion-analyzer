@@ -18,6 +18,7 @@ const TherapySession = () => {
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoOn, setIsVideoOn] = useState(true);
   const [sessionId, setSessionId] = useState('');
+  const sessionIdRef = useRef('');
   const [sessionEnded, setSessionEnded] = useState(false);
   const [isUserSpeaking, setIsUserSpeaking] = useState(false);
   const [isAiSpeaking, setIsAiSpeaking] = useState(false);
@@ -45,8 +46,10 @@ const TherapySession = () => {
 
     vapi.on('message', (message) => {
       if (message.type === 'call-start' || message.call?.id) {
-        if (!sessionId) {
-          setSessionId(message.call?.id || 'sess_' + Date.now());
+        if (!sessionIdRef.current) {
+          const newId = message.call?.id || 'sess_' + Date.now();
+          setSessionId(newId);
+          sessionIdRef.current = newId;
         }
       }
 
@@ -67,6 +70,10 @@ const TherapySession = () => {
       vapi.removeAllListeners();
     };
   }, [navigate]);
+
+  useEffect(() => {
+    sessionIdRef.current = sessionId;
+  }, [sessionId]);
 
   useEffect(() => {
     let timer;
@@ -101,7 +108,7 @@ const TherapySession = () => {
   const handleCompleteSession = async () => {
     setIsActive(false);
     try {
-      await axios.post(`${API_BASE}/session/end`, { sessionId });
+      await axios.post(`${API_BASE}/session/end`, { sessionId: sessionIdRef.current });
     } catch (err) { }
     setSessionEnded(true);
     confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
