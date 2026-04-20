@@ -1,48 +1,56 @@
 # System Architecture
 
-MindSync AI follows a decoupled microservices architecture, separating the user interface, the orchestration logic, and the specialized AI processing engine. This design ensures that the machine learning model can be scaled or updated independently of the web application.
+MindSync AI follows a distributed microservices architecture designed for real-time emotional intelligence. The system separates high-latency voice processing (Vapi) from the core logic (Node.js) and the specialized analytical engine (FastAPI + TensorFlow).
 
 ## System Workflow Diagram
 
 ```mermaid
-graph TD
-    User((User)) -->|Voice/Text| FE[Frontend: React + Vite]
-    FE -->|API Call| BE[Backend Orchestrator: Node.js]
-    BE -->|Proxy Request| AI[AI Microservice: FastAPI]
-    AI -->|NLP Processing| Pipeline[TF-IDF + LogReg]
-    Pipeline -->|Emotional Vector| AI
-    AI -->|Confidence Scores| BE
-    BE -->|State Persistence| DB[(MongoDB Atlas)]
-    BE -->|Unified Response| FE
-    FE -->|Real-time UI Update| User
+flowchart TD
+    subgraph Voice_Interactive_Layer [Communication & Voice]
+        User((User)) <-->|Voice/Audio| Vapi[Vapi Assistant]
+        Vapi -->|Transcription| Vapi
+    end
+
+    subgraph Service_Orchestration [Backend Gateway]
+        Vapi <-->|Webhook/Tool Call| BE[Node.js Backend]
+        BE -->|Data Logging| DB[(MongoDB Atlas)]
+    end
+
+    subgraph Intelligence_Engine [AI Microservice]
+        BE <-->|API Request| AI[FastAPI Service]
+        AI -->|Preprocessing| DL[Deep Learning Engine]
+        DL -->|Bi-Directional LSTM| TF[TensorFlow Inference]
+    end
+
+    Vapi -->|Adaptable Response| User
 ```
 
 ## Core Components
 
-### 1. Frontend Implementation
-- **Role**: Client interface and real-time interaction.
-- **Technologies**: React Hooks, Axios, Web Speech API Standard.
-- **Specification**: High-frequency state management for the therapy session interface, handling local audio-to-text transcription to minimize latency before transmission.
+### 1. Conversational Voice Layer (Vapi)
+- **Assistant**: An emotionally intelligent agent powered by OpenAI's GPT-4-turbo-preview.
+- **Tools**: Implements the `predict-emotion` function, which Vapi is instructed to call every time the user speaks to align its tone and empathy.
+- **Voice/Transcriber**: High-fidelity audio using PlayHT (Voice) and Deepgram (Transcriber) for sub-second latency.
 
-### 2. Backend Orchestration
-- **Role**: API Gateway and Data Persistence.
-- **Technologies**: Express.js, JWT (Authentication), Mongoose (ODM).
-- **Function**: Manages the session lifecycle. It acts as a secure buffer between the client and the AI service, ensuring data integrity and long-term storage in MongoDB.
+### 2. Backend Orchestrator (Node.js + Express)
+- **Role**: State management and Vapi Webhook handler.
+- **Webhook Logic**: Processes `tool-calls` from Vapi, proxies the text to the AI engine, and saves the emotional vectors to MongoDB for session tracking.
+- **Persistence**: Mongoose (ODM) records every interaction, which is later visualized in the user dashboard.
 
-### 3. AI Service (Linguistic Engine)
-- **Role**: Deep Linguistic Analysis and Emotion Classification.
-- **Technologies**: FastAPI, Scikit-learn, NLTK.
-- **Performance**: Sub-50ms inference time achieved through model serialization using Joblib.
+### 3. AI Service (Deep Learning Engine)
+- **Role**: Sequence-aware emotion classification.
+- **Stack**: FastAPI, TensorFlow/Keras, NLTK.
+- **Inference**: Loads a serialized `.h5` model (Bidirectional LSTM) to analyze the emotional nuance and probability of input text.
 
-## Data Sequence
-1. **Acquisition**: Voice input is converted to text via browser-level Web Speech API.
-2. **Transmission**: The React client transmits the transcript to the primary backend.
-3. **Internal Proxy**: Node.js performs a synchronous POST request to the Python service.
-4. **Classification**: The Python service applies preprocessing, TF-IDF vectorization, and predicts emotion class probabilities.
-5. **Persistence**: The resulting emotional vector and confidence score are logged in the database session.
-6. **Resolution**: The analyzed response is returned to the client for UI rendering.
+## Data Movement Sequence
+1. **Input**: User speaks to the Vapi Assistant.
+2. **Transcription**: Deepgram generates a text transcript in real-time.
+3. **Execution**: Vapi triggers the `predict-emotion` tool via the Node.js webhook.
+4. **Analysis**: Node.js calls the FastAPI service where the TensorFlow model predicts one of 6 emotions (Anger, Fear, Joy, Love, Sadness, Surprise).
+5. **Adjustment**: Vapi receives the emotion name and dynamically adjusts its prompt instructions to be more empathetic or supportive.
+6. **Persistence**: The full message, emotion, and confidence score are saved to MongoDB.
 
-## Infrastructure Specifications
-- **Database**: MongoDB Atlas Cluster (Cloud Infrastructure).
-- **Environment Management**: Isolated .env configurations for dev/prod environments.
-- **Protocol**: HTTP/REST with shared JSON schemas for cross-language compatibility.
+## Infrastructure
+- **Server**: Node.js (Gateway) and FastAPI (AI).
+- **External Services**: Vapi, Deepgram, PlayHT, MongoDB Atlas.
+- **Connectivity**: Global REST APIs and Webhook protocols.

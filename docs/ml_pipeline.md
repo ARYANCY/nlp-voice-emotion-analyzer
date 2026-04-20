@@ -1,52 +1,52 @@
 # Machine Learning Pipeline Specification
 
-The MindSync AI emotion analysis engine is built on a supervised linguistic classification framework. It utilizes specialized feature extraction to identify psychological markers in conversational English.
+The MindSync AI emotion analysis engine has evolved from classic linear models into a **Bidirectional Long Short-Term Memory (Bi-LSTM)** architecture. This allows the system to capture complex sequential dependencies and "long-range" emotional context in human speech.
 
 ## Pipeline Lifecycle Diagram
 
 ```mermaid
-graph TD
-    Data[Source CSV: data/emotions.csv] --> Pre[Preprocessing: RegEx + NLTK]
-    Pre --> Vec[TF-IDF Vectorization: n-gram 1,2]
-    Vec --> Train[Logistic Regression Training]
-    Train --> Eval[Evaluation: F1-Score / Confusion Matrix]
-    Eval --> Save[Serialization: joblib.dump]
-    Save --> Prod[Production Inference: joblib.load]
+flowchart TD
+    Data[Dataset: 20k Samples] --> Pre[Linguistic Cleaning]
+    Pre --> Token[Tokenization & Padding]
+    Token --> Embed[Embedding Layer: 128 Dim]
     
-    subgraph Inference_Scope [Real-time API]
-        Input[Raw User Text] --> Clean[Cleaning]
-        Clean --> Vector[Vector Transformation]
-        Vector --> Model[Loaded Model]
-        Model --> Out[Confidence Vector Output]
+    subgraph Model_Architecture [Deep Learning Stack]
+        Embed --> LSTM1[Bi-LSTM: 128 Units]
+        LSTM1 --> Drop1[Dropout: 0.3]
+        Drop1 --> LSTM2[Bi-LSTM: 64 Units]
+        LSTM2 --> Drop2[Dropout: 0.3]
+    end
+
+    Drop2 --> Dense[Dense: 64 ReLU]
+    Dense --> Soft[Output: 6 Softmax]
+    Soft --> Save[Save: emotion_model.h5]
+    
+    subgraph Production_Inference [FastAPI Runtime]
+        Input[Raw Transcription] --> Model[Load .h5 Engine]
+        Model --> Vector[Emotion Probability Vector]
     end
 ```
 
 ## Technical Processing Workflow
 
-### 1. Linguistic Preprocessing
-Input data is normalized through a deterministic cleaning pipeline:
-- **Normalization**: Conversion to lower-case to ensure case-insensitivity.
-- **Noise Reduction**: Application of regular expressions to strip non-alpha characters and punctuation.
-- **Stopword Filtering**: Removal of high-frequency English words via the NLTK corpus (e.g., "the", "and", "is") to isolate sentiment-rich tokens.
+### 1. Data Source and Augmentation
+The pipeline utilizes a high-volume dataset from Kaggle: [**Emotions Dataset for NLP**](https://www.kaggle.com/datasets/praveengovi/emotions-dataset-for-nlp).
+- **Volume**: ~20k Samples (Train: 16k, Val: 2k, Test: 2k).
+- **Labels**: 6 distinct emotion classes: Anger, Fear, Joy, Love, Sadness, Surprise.
+- **Normalization**: Text is converted to lower-case and stripped of alphanumeric noise via RegEx.
+- **Tokenization**: A `vocab_size` of 12,000 words mapped to integers.
+- **Sequence Padding**: Inputs are padded to a `max_len` of 60 tokens to ensure uniform input shapes for the LSTM layers.
 
-### 2. Feature Engineering (TF-IDF)
-The engine transforms textual tokens into a numerical vector space using Term Frequency-Inverse Document Frequency.
-- **Objective**: Penalize common terminology and amplify weights for unique emotional indicators (e.g., "desperate", "joyful").
-- **Configuration**: The vectorizer utilizes an n-gram range of (1, 2). This allows the model to capture bigrams such as "not happy," preserving important contextual negations.
+### 2. Architecture: Bidirectional LSTM
+The model is designed to read text in both directions (forward and backward) to understand the full context of an emotional statement.
+- **Embedding Layer**: Projects integers into a 128-dimensional dense vector space.
+- **Bidirectional Layers**: Double-stacked LSTM units ensure the model remembers "early" words in a sentence even when reaching the end.
+- **Dropout Regularization**: 0.3 dropout rate is applied between layers to prevent overfitting and ensure the model generalizes well to new users.
 
-### 3. Classification Algorithm (Logistic Regression)
-A Logistic Regression model is employed to predict the probability of class membership across five emotional categories: Happy, Sad, Angry, Anxious, and Neutral.
-- **Inference Method**: The model uses the `predict_proba()` method to return a confidence vector, allowing the system to handle edge cases with low-confidence scores.
-- **Serialization**: The trained pipeline is serialized into a `.pkl` format using Joblib for deployment in the FastAPI production environment.
+### 3. Training and Validation
+- **Optimizer**: Adam optimizer with Sparse Categorical Crossentropy.
+- **Performance**: The model achieves **~92% Accuracy** on the testing set.
+- **Early Stopping**: Monitors validation loss with a patience of 2 epochs to restore the best weights.
 
-## Model Evaluation and Optimization
-
-The pipeline is validated against an 80/20 train-test split. The following metrics are prioritized:
-- **F1-Score**: To ensure balanced performance between Precision and Recall across all emotion classes.
-- **Confidence Thresholds**: Inference results are accompanied by a percentage-based score used for filtering low-fidelity responses in the user interface.
-
-## Training Procedures
-To execute a model retraining cycle:
-1. Populate `ai-service/data/emotions.csv` with a new labeled dataset.
-2. Execute `python train.py`.
-3. Review the generated `classification_report` for performance anomalies.
+## Deployment Specifications
+The model is serialized as a Keras `.h5` file and deployed within a FastAPI microservice. Inference is triggered via an HTTP POST request, providing an "Emotion Vector" which the Vapi voice assistant uses to guide its conversational tone.

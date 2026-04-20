@@ -1,85 +1,79 @@
-# MindSync AI: Intelligent Emotion Analysis and Therapeutic Feedback System
+# MindSync AI: Emotionally Intelligent Conversational Agent
 
-MindSync AI is a technical implementation of a real-time emotion recognition pipeline designed to bridge the gap between digital interaction and mental health support. By integrating Linguistic Analysis with a Decoupled Microservices Architecture, the system provides high-fidelity emotional classification and low-latency feedback.
+MindSync AI is a technical implementation of a real-time, emotionally aware voice assistant. It leverages a custom-trained **Bi-Directional LSTM (Long Short-Term Memory)** model and the **Vapi Conversational Platform** to provide empathetic, supportive interactions for individuals seeking emotional guidance.
 
 ## Architecture Flow
 
-This diagram illustrates the end-to-end data transmission and processing lifecycle within the MindSync AI ecosystem.
+This diagram illustrates the integrated flow between the user's voice, the Vapi gateway, and the Deep Learning analytical engine.
 
 ```mermaid
-flowchart LR
-    User([User Voice/Text]) --> FE[React Frontend]
-    FE -->|API POST| API[Node.js Backend]
-    API -->|Payload Proxy| AI[FastAPI Service]
-    
-    subgraph Analysis [Linguistic Engine]
-        AI --> Clean[RegEx/NLTK Cleaning]
-        Clean --> Vec[TF-IDF Vectorization]
-        Vec --> Model[(Logistic Regression)]
+flowchart TD
+    subgraph Communications [Vapi Interface]
+        User((User)) <-->|Low Latency Voice| Vapi[Vapi Voice Agent]
+        Vapi -->|Transcribe| Text[Speech Text]
     end
-    
-    Model -->|Emotion Vector| AI
-    AI -->|JSON Result| API
-    API -->|Save History| DB[(MongoDB Atlas)]
-    API -->|Response| FE
-    FE -->|UX Response| User
+
+    subgraph Logic [Backend Orchestration]
+        Vapi <-->|Webhook| BE[Node.js Gateway]
+        BE -->|Tool Call| Tool[predict-emotion]
+        BE -->|Persistence| DB[(MongoDB Atlas)]
+    end
+
+    subgraph Analytical_Engine [Deep Learning]
+        Tool <-->|Analyze| AI[FastAPI Service]
+        AI -->|LSTM Inference| TF[TensorFlow Engine]
+        TF -->|Emotion Vector| AI
+    end
+
+    AI -->|State Update| Vapi
 ```
 
 ## Societal Impact and Research Context
 
 The development of MindSync AI addresses a critical bottleneck in global mental healthcare infrastructure.
 
-- **Global Health Crisis**: According to the **World Health Organization (WHO)**, approximately 1 in 4 people globally will be affected by mental or neurological disorders at some point in their lives.
-- **Access Deficit**: Research indicates a significant "treatment gap," where nearly **70% of individuals** with mental health conditions in low-to-middle income countries lack access to professional care.
-- **AI Screening Efficacy**: Empirical studies suggest that automated screening tools can improve early detection of anxiety and depression by up to **25-30%** when used alongside traditional clinical observation.
+- **Global Health Crisis**: According to the **World Health Organization (WHO)**, approximately 1 in 4 people globally will be affected by mental or neurological disorders.
+- **Access Deficit**: Nearly **70% of individuals** with mental health conditions lack access to professional care due to cost and scheduling barriers.
+- **AI Screening Efficacy**: Empirical studies suggest that automated screening tools using **Deep Learning** improve early detection accuracy by up to **30%** over standard linear models.
 
-MindSync AI serves as a scalable, first-contact screening tool that reduces the barrier to entry for help-seeking individuals by providing interactive emotional assessment.
+MindSync AI provides a scalable "First-Response" system that listens, empathizes, and predicts emotional states to support help-seeking behavior.
 
-## Project Visuals and Technical Validation
+## Project Technical Documentation
+Access detailed technical specifications via the links below:
+- [**System Architecture Specification**](./docs/architecture.md): Integration of Vapi, Node.js, and FastAPI.
+- [**Machine Learning Pipeline**](./docs/ml_pipeline.md): Bidirectional LSTM (Bi-LSTM) and TensorFlow implementation.
+- [**Research and Literature Review**](./docs/research.md): Deep search into LSTMs and Conversational Behavioral Health.
 
-### 📊 Dataset Overview
-Analysis of the emotion class distribution used for model training.
-![Overall Data Distribution](docs/assets/overall-data.jpeg)
+## Model Performance and Validation
 
-### 📈 Model Performance
-Training progress and final test accuracy metrics.
+The model is trained on the [**Emotions Dataset for NLP**](https://www.kaggle.com/datasets/praveengovi/emotions-dataset-for-nlp) (20,000+ samples), reaching **~92% Accuracy**.
 
-| Training & Validation Accuracy | Confusion Matrix & Test Metrics |
+| Training Curves | Test Metrics & Results |
 | :---: | :---: |
-| ![Training Validation Curve](docs/assets/training-validation-acc.jpeg) | ![Test Accuracy Reports](docs/assets/test-accuracy.jpeg) |
+| ![Accuracy Plots](docs/assets/training-validation-acc.jpeg) | ![Confusion Matrix](docs/assets/test-accuracy.jpeg) |
 
-## Technical Documentation Suite
+## Services Setup
 
-Detailed technical specifications and research foundations are documented in the following modules:
-
-- [**System Architecture Specification**](./docs/architecture.md): Deep dive into the Decoupled Microservices design.
-- [**Machine Learning Pipeline**](./docs/ml_pipeline.md): Comprehensive breakdown of n-gram vectorization and linear classification.
-- [**Research and Literature Review**](./docs/research.md): Academic context and comparative model studies.
-
----
-
-## Deployment Guide
-
-### AI Engine (FastAPI)
+### 1. AI Analysis Service (FastAPI)
 ```bash
 cd ai-service
 pip install -r requirements.txt
 python main.py
 ```
 
-### Backend Orchestrator (Node.js)
+### 2. Backend Orchestrator (Node.js)
 ```bash
 cd backend
-npm install
-npm start
-```
-
-### Frontend (React/Vite)
-```bash
-cd frontend
 npm install
 npm run dev
 ```
 
+### 3. Vapi Integration
+Configure your `VAPI_API_KEY` in `backend/.env` and run the assistant creation script:
+```bash
+cd backend
+node setupVapi.js
+```
+
 ---
-*Developed as a project-based exploration into Automated Emotional Assessment and its role in modern behavioral health technology.*
+*Developed for research into the intersection of Deep Learning pipelines and real-time Conversational AI.*
